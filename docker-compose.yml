@@ -1,0 +1,154 @@
+# PetClinic - microservicios Laravel (infraestructura base, Fase 3)
+#
+# Orquestación propia (sin Laravel Sail). Cada microservicio se compone de:
+#   - ms-<x>-app : PHP 8.4-FPM (imagen propia, ./ms-<x>/docker/Dockerfile)
+#   - ms-<x>     : Nginx sidecar -> FastCGI a ms-<x>-app:9000 (hostname público en la red)
+#   - db-<x>     : MySQL 8.4 propio (Database-per-Service)
+# Todos comparten la red bridge `petclinic`; entre servicios se usa http://ms-<x>.
+#
+# Pendiente de decisiones de Fase 2 / Fase 4 (intencionalmente NO incluido aún):
+#   - gateway  : Nginx / KrakenD / Kong  -> ./gateway
+#   - frontend : Blade / Livewire / Vue / Next.js -> ./frontend
+#   - redis    : colas para eventos asíncronos (Iteración 3, bonus)
+
+x-php-app: &php-app
+    extra_hosts:
+        - 'host.docker.internal:host-gateway'
+    networks:
+        - petclinic
+
+x-nginx: &nginx
+    image: 'nginx:1.27-alpine'
+    networks:
+        - petclinic
+
+x-mysql: &mysql
+    image: 'mysql:8.4'
+    networks:
+        - petclinic
+    healthcheck:
+        test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -uroot -p"$$MYSQL_ROOT_PASSWORD" --silent']
+        interval: 5s
+        retries: 10
+        timeout: 5s
+
+services:
+    # -------------------------------------------------------------- Vets
+    ms-vets-app:
+        <<: *php-app
+        build:
+            context: ./ms-vets/docker
+            args:
+                HOST_UID: '${HOST_UID:-1000}'
+                HOST_GID: '${HOST_GID:-1000}'
+        image: petclinic/ms-vets:dev
+        volumes:
+            - './ms-vets:/var/www/html'
+        depends_on:
+            db-vets:
+                condition: service_healthy
+
+    ms-vets:
+        <<: *nginx
+        ports:
+            - '${MS_VETS_PORT:-8001}:80'
+        volumes:
+            - './ms-vets/docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro'
+            - './ms-vets/public:/var/www/html/public:ro'
+        depends_on:
+            - ms-vets-app
+
+    db-vets:
+        <<: *mysql
+        ports:
+            - '${DB_VETS_PORT:-33061}:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_VETS_ROOT_PASSWORD:-root_vets}'
+            MYSQL_DATABASE: db_vets
+            MYSQL_USER: vets
+            MYSQL_PASSWORD: secret
+        volumes:
+            - 'db-vets-data:/var/lib/mysql'
+
+    # --------------------------------------------------------- Customers
+    ms-customers-app:
+        <<: *php-app
+        build:
+            context: ./ms-customers/docker
+            args:
+                HOST_UID: '${HOST_UID:-1000}'
+                HOST_GID: '${HOST_GID:-1000}'
+        image: petclinic/ms-customers:dev
+        volumes:
+            - './ms-customers:/var/www/html'
+        depends_on:
+            db-customers:
+                condition: service_healthy
+
+    ms-customers:
+        <<: *nginx
+        ports:
+            - '${MS_CUSTOMERS_PORT:-8002}:80'
+        volumes:
+            - './ms-customers/docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro'
+            - './ms-customers/public:/var/www/html/public:ro'
+        depends_on:
+            - ms-customers-app
+
+    db-customers:
+        <<: *mysql
+        ports:
+            - '${DB_CUSTOMERS_PORT:-33062}:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_CUSTOMERS_ROOT_PASSWORD:-root_customers}'
+            MYSQL_DATABASE: db_customers
+            MYSQL_USER: customers
+            MYSQL_PASSWORD: secret
+        volumes:
+            - 'db-customers-data:/var/lib/mysql'
+
+    # ------------------------------------------------------------ Visits
+    ms-visits-app:
+        <<: *php-app
+        build:
+            context: ./ms-visits/docker
+            args:
+                HOST_UID: '${HOST_UID:-1000}'
+                HOST_GID: '${HOST_GID:-1000}'
+        image: petclinic/ms-visits:dev
+        volumes:
+            - './ms-visits:/var/www/html'
+        depends_on:
+            db-visits:
+                condition: service_healthy
+
+    ms-visits:
+        <<: *nginx
+        ports:
+            - '${MS_VISITS_PORT:-8003}:80'
+        volumes:
+            - './ms-visits/docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro'
+            - './ms-visits/public:/var/www/html/public:ro'
+        depends_on:
+            - ms-visits-app
+
+    db-visits:
+        <<: *mysql
+        ports:
+            - '${DB_VISITS_PORT:-33063}:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_VISITS_ROOT_PASSWORD:-root_visits}'
+            MYSQL_DATABASE: db_visits
+            MYSQL_USER: visits
+            MYSQL_PASSWORD: secret
+        volumes:
+            - 'db-visits-data:/var/lib/mysql'
+
+networks:
+    petclinic:
+        driver: bridge
+
+volumes:
+    db-vets-data:
+    db-customers-data:
+    db-visits-data:
