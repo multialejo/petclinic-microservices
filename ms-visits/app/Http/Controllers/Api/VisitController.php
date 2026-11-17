@@ -33,6 +33,9 @@ class VisitController extends Controller
     /**
      * CU-08: agendar visita. Antes de guardar se verifica por HTTP en ms-customers que el pet exista
      * y pertenezca al owner (404 / 422 / 503 controlados, docs/fase2 §5).
+     *
+     * @response 404 array{message: string}
+     * @response 503 array{message: string}
      */
     public function store(StoreVisitRequest $request, CustomersClient $customers): JsonResponse
     {
