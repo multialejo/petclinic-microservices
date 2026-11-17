@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\VetController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// Contrato: docs/fase2/README.md §4 (ms-vets). Público vía gateway: GET /api/vets[?page=]
+Route::get('/vets', [VetController::class, 'index']);
