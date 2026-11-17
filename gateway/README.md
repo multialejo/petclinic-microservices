@@ -32,6 +32,7 @@ El query string se reenvía sin cambios: `GET /api/customers/owners?last_name=Da
 | CORS de Laravel | se ocultan los `Access-Control-*` de los servicios (`proxy_hide_header`) para no duplicar headers |
 | `X-Internal-Token` | se vacía en toda petición externa (solo lo usan los servicios entre sí) |
 | Trazabilidad | `X-Request-Id` generado por el gateway, enviado al upstream y devuelto al cliente; `X-Forwarded-For/Proto` |
+| Host y prefijo | reenvía `Host` con puerto (`$http_host`) y, solo en `/api/customers/*`, `X-Forwarded-Prefix: /api/customers` para que los enlaces de paginación de ms-customers apunten a la URL pública (Fase 4) |
 | Timeouts | conexión 2 s, lectura 10 s |
 
 Los upstreams se resuelven en cada petición (`resolver 127.0.0.11` + variables en `proxy_pass`), por eso el
