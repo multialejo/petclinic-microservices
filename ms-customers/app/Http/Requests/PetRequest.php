@@ -37,12 +37,25 @@ class PetRequest extends FormRequest
                         ->exists();
 
                     if ($exists) {
-                        $fail('El owner ya tiene una mascota con ese nombre.');
+                        $fail('is already in use');
                     }
                 },
             ],
             'birth_date' => ['required', 'date_format:Y-m-d', 'before_or_equal:today'],
             'type_id' => ['required', 'integer', 'exists:types,id'],
+        ];
+    }
+
+    /** Mismos textos que el monolito (PetValidator, PetController y messages.properties). */
+    public function messages(): array
+    {
+        return [
+            '*.required' => 'is required',
+            'name.max' => 'Name must be no more than 30 characters',
+            'birth_date.date_format' => 'invalid date',
+            'birth_date.before_or_equal' => 'invalid date',
+            'type_id.integer' => 'is required',
+            'type_id.exists' => 'is required',
         ];
     }
 }

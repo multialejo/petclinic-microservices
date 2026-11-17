@@ -195,7 +195,8 @@ class VisitsApiTest extends TestCase
 
         $this->postJson('/api/visits', $this->payload(['date' => now()->toDateString(), 'description' => '']))
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['date', 'description']);
+            ->assertJsonPath('errors.date.0', 'Visit date must be in the future')
+            ->assertJsonPath('errors.description.0', 'must not be blank');
 
         $this->postJson('/api/visits', [])
             ->assertUnprocessable()

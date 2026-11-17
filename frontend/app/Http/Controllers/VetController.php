@@ -18,7 +18,7 @@ class VetController extends Controller
         $result = $this->gateway->get('/api/vets', ['page' => $page]);
 
         if (empty($result['data']) && $page > 1) {
-            return redirect()->route('vets.index');
+            return redirect('/vets.html');
         }
 
         return view('vets.index', ['vets' => $result['data'], 'meta' => $result['meta']]);

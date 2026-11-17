@@ -58,7 +58,9 @@ class PetsApiTest extends TestCase
 
         $this->postJson('/api/owners/1/pets', [
             'name' => 'Toby', 'birth_date' => now()->addDay()->toDateString(), 'type_id' => 99,
-        ])->assertUnprocessable()->assertJsonValidationErrors(['birth_date', 'type_id']);
+        ])->assertUnprocessable()
+            ->assertJsonPath('errors.birth_date.0', 'invalid date')
+            ->assertJsonPath('errors.type_id.0', 'is required');
     }
 
     public function test_duplicate_pet_name_is_case_insensitive_per_owner(): void
@@ -66,7 +68,7 @@ class PetsApiTest extends TestCase
         // Owner 1 ya tiene "Leo".
         $this->postJson('/api/owners/1/pets', ['name' => 'LEO', 'birth_date' => '2020-01-01', 'type_id' => 1])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['name']);
+            ->assertJsonPath('errors.name.0', 'is already in use');
 
         // Otro owner sí puede tener un "Leo".
         $this->postJson('/api/owners/2/pets', ['name' => 'Leo', 'birth_date' => '2020-01-01', 'type_id' => 1])

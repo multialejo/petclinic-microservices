@@ -15,7 +15,9 @@ use Illuminate\Validation\ValidationException;
  * Traducción de respuestas:
  *  - 2xx          -> array JSON
  *  - 404          -> abort(404)
- *  - 422          -> ValidationException con los `errors` de la API (se muestran junto a cada campo)
+ *  - 422          -> ValidationException con los `errors` de la API (se muestran junto a cada campo);
+ *                    $errorKeys renombra las claves snake_case de la API a los campos del formulario
+ *                    (mismos nombres que el monolito: first_name -> firstName, …)
  *  - 5xx / caída  -> GatewayUnavailableException (página 503, o aviso si el llamador la captura)
  */
 class GatewayClient
@@ -25,14 +27,16 @@ class GatewayClient
         return $this->send('get', $path, $query);
     }
 
-    public function post(string $path, array $data): array
+    /** @param array<string,string> $errorKeys clave de la API => campo del formulario */
+    public function post(string $path, array $data, array $errorKeys = []): array
     {
-        return $this->send('post', $path, $data);
+        return $this->send('post', $path, $data, $errorKeys);
     }
 
-    public function put(string $path, array $data): array
+    /** @param array<string,string> $errorKeys clave de la API => campo del formulario */
+    public function put(string $path, array $data, array $errorKeys = []): array
     {
-        return $this->send('put', $path, $data);
+        return $this->send('put', $path, $data, $errorKeys);
     }
 
     private function http(): PendingRequest
@@ -44,7 +48,7 @@ class GatewayClient
             ->timeout((int) config('services.gateway.timeout', 8));
     }
 
-    private function send(string $method, string $path, array $payload): array
+    private function send(string $method, string $path, array $payload, array $errorKeys = []): array
     {
         try {
             /** @var Response $res */
@@ -62,7 +66,12 @@ class GatewayClient
         }
 
         if ($res->status() === 422) {
-            throw ValidationException::withMessages((array) $res->json('errors', []));
+            $errors = [];
+            foreach ((array) $res->json('errors', []) as $key => $messages) {
+                $errors[$errorKeys[$key] ?? $key] = $messages;
+            }
+
+            throw ValidationException::withMessages($errors);
         }
 
         throw new GatewayUnavailableException(

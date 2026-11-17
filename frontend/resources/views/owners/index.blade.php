@@ -1,27 +1,31 @@
-@extends('layouts.app')
-
-@section('title', 'Dueños')
+@extends('layouts.app', ['menu' => 'owners'])
 
 @section('content')
-    <h2>Dueños <small class="text-body-secondary fs-6">({{ $meta['total'] }} resultados)</small></h2>
-    <div class="card"><div class="table-responsive">
-        <table class="table table-striped mb-0">
-            <thead><tr><th>Nombre</th><th>Dirección</th><th>Ciudad</th><th>Teléfono</th><th>Mascotas</th></tr></thead>
-            <tbody>
-            @foreach ($owners as $owner)
-                <tr>
-                    <td><a href="{{ route('owners.show', $owner['id']) }}">{{ $owner['first_name'] }} {{ $owner['last_name'] }}</a></td>
-                    <td>{{ $owner['address'] }}</td>
-                    <td>{{ $owner['city'] }}</td>
-                    <td>{{ $owner['telephone'] }}</td>
-                    <td>{{ collect($owner['pets'])->pluck('name')->join(', ') }}</td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
-    </div></div>
-    <div class="mt-3">
-        @include('partials.pager', ['meta' => $meta, 'route' => 'owners.index', 'query' => ['last_name' => $lastName]])
-    </div>
-    <a class="btn btn-outline-secondary" href="{{ route('owners.find') }}">Nueva búsqueda</a>
+  <h2>Owners</h2>
+
+  <table id="owners" class="table table-striped">
+    <thead>
+      <tr>
+        <th style="width: 150px;">Name</th>
+        <th style="width: 200px;">Address</th>
+        <th>City</th>
+        <th style="width: 120px">Telephone</th>
+        <th>Pets</th>
+      </tr>
+    </thead>
+    <tbody>
+@foreach ($owners as $owner)
+      <tr>
+        <td>
+          <a href="/owners/{{ $owner['id'] }}">{{ $owner['first_name'] }} {{ $owner['last_name'] }}</a>
+        </td>
+        <td>{{ $owner['address'] }}</td>
+        <td>{{ $owner['city'] }}</td>
+        <td>{{ $owner['telephone'] }}</td>
+        <td><span>{{ collect($owner['pets'])->pluck('name')->join(', ') }}</span></td>
+      </tr>
+@endforeach
+    </tbody>
+  </table>
+@include('partials.pager', ['meta' => $meta, 'url' => '/owners', 'query' => ['lastName' => $lastName]])
 @endsection

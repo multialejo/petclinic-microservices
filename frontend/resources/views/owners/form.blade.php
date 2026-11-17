@@ -1,23 +1,20 @@
-@extends('layouts.app')
-
-@section('title', $owner ? 'Editar dueño' : 'Registrar dueño')
+@extends('layouts.app', ['menu' => 'owners'])
 
 @section('content')
-    <h2>{{ $owner ? 'Editar dueño' : 'Registrar dueño' }}</h2>
-    <div class="card"><div class="card-body">
-        <form method="POST" action="{{ $owner ? route('owners.update', $owner['id']) : route('owners.store') }}" novalidate>
-            @csrf
-            <div class="row">
-                <div class="col-md-6">@include('partials.field', ['name' => 'first_name', 'label' => 'Nombre', 'value' => $owner['first_name'] ?? '', 'attrs' => 'maxlength="30" required'])</div>
-                <div class="col-md-6">@include('partials.field', ['name' => 'last_name', 'label' => 'Apellido', 'value' => $owner['last_name'] ?? '', 'attrs' => 'maxlength="30" required'])</div>
-            </div>
-            @include('partials.field', ['name' => 'address', 'label' => 'Dirección', 'value' => $owner['address'] ?? '', 'attrs' => 'maxlength="255" required'])
-            <div class="row">
-                <div class="col-md-6">@include('partials.field', ['name' => 'city', 'label' => 'Ciudad', 'value' => $owner['city'] ?? '', 'attrs' => 'maxlength="80" required'])</div>
-                <div class="col-md-6">@include('partials.field', ['name' => 'telephone', 'label' => 'Teléfono (10 dígitos)', 'type' => 'tel', 'value' => $owner['telephone'] ?? '', 'attrs' => 'inputmode="numeric" required'])</div>
-            </div>
-            <button class="btn btn-primary" type="submit">{{ $owner ? 'Actualizar dueño' : 'Registrar dueño' }}</button>
-            <a class="btn btn-link" href="{{ $owner ? route('owners.show', $owner['id']) : route('owners.find') }}">Cancelar</a>
-        </form>
-    </div></div>
+  <h2>Owner</h2>
+  <form class="form-horizontal" id="add-owner-form" method="post">
+    @csrf
+    <div class="form-group has-feedback">
+@include('partials.input', ['label' => 'First Name', 'name' => 'firstName', 'type' => 'text', 'value' => $owner['first_name'] ?? ''])
+@include('partials.input', ['label' => 'Last Name', 'name' => 'lastName', 'type' => 'text', 'value' => $owner['last_name'] ?? ''])
+@include('partials.input', ['label' => 'Address', 'name' => 'address', 'type' => 'text', 'value' => $owner['address'] ?? ''])
+@include('partials.input', ['label' => 'City', 'name' => 'city', 'type' => 'text', 'value' => $owner['city'] ?? ''])
+@include('partials.input', ['label' => 'Telephone', 'name' => 'telephone', 'type' => 'text', 'value' => $owner['telephone'] ?? ''])
+    </div>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button class="btn btn-primary" type="submit">{{ $owner ? 'Update Owner' : 'Add Owner' }}</button>
+      </div>
+    </div>
+  </form>
 @endsection

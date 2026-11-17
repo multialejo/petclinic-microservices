@@ -18,20 +18,17 @@ class VisitController extends Controller
         $pet = $this->gateway->get("/api/customers/pets/{$petId}")['data'];
         abort_unless((int) $pet['owner_id'] === $ownerId, 404);
 
+        // "Previous Visits": si ms-visits no responde, la tabla queda vacía (el formulario sigue operativo).
         $visits = [];
-        $visitsUnavailable = false;
-
         try {
             $visits = $this->gateway->get('/api/visits', ['pet_ids' => $petId])['data'] ?? [];
         } catch (GatewayUnavailableException) {
-            $visitsUnavailable = true;
         }
 
         return view('visits.form', [
             'pet' => $pet,
             'visits' => $visits,
-            'visitsUnavailable' => $visitsUnavailable,
-            'defaultDate' => now()->addDay()->toDateString(), // As-Is: fecha por defecto = mañana
+            'defaultDate' => now()->addDay()->toDateString(), // As-Is: fecha por defecto y mínima = mañana
         ]);
     }
 
@@ -44,6 +41,6 @@ class VisitController extends Controller
             'description' => $request->input('description'),
         ]);
 
-        return redirect()->route('owners.show', $ownerId)->with('status', 'La visita fue agendada.');
+        return redirect("/owners/{$ownerId}")->with('message', 'Your visit has been booked');
     }
 }

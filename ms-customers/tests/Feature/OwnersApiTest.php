@@ -95,7 +95,9 @@ class OwnersApiTest extends TestCase
     {
         $this->postJson('/api/owners', ['telephone' => '12345'])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['first_name', 'last_name', 'address', 'city', 'telephone']);
+            ->assertJsonValidationErrors(['first_name', 'last_name', 'address', 'city', 'telephone'])
+            ->assertJsonPath('errors.first_name.0', 'must not be blank')
+            ->assertJsonPath('errors.telephone.0', 'Telephone must be a 10-digit number');
 
         $this->postJson('/api/owners', [...$this->valid, 'first_name' => str_repeat('a', 31)])
             ->assertUnprocessable()

@@ -24,8 +24,13 @@ class StoreVisitRequest extends FormRequest
 
     public function messages(): array
     {
+        // Mismos textos que el monolito (Visit.java y messages.properties).
         return [
-            'date.after' => 'La fecha de la visita debe ser posterior a hoy.',
+            'description.required' => 'must not be blank',
+            'description.max' => 'size must be between 0 and 255',
+            'date.required' => 'is required',
+            'date.date_format' => 'invalid date',
+            'date.after' => 'Visit date must be in the future',
         ];
     }
 }

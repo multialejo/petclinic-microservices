@@ -10,7 +10,8 @@ use Illuminate\View\View;
 /** CU-05 (registrar mascota), CU-06 (editar mascota) y CU-07 (tipos, para el select). */
 class PetController extends Controller
 {
-    private const FIELDS = ['name', 'birth_date', 'type_id'];
+    /** Campo del formulario (monolito) => campo de la API. */
+    private const FIELDS = ['name' => 'name', 'birthDate' => 'birth_date', 'type' => 'type_id'];
 
     public function __construct(private GatewayClient $gateway) {}
 
@@ -25,9 +26,9 @@ class PetController extends Controller
 
     public function store(Request $request, int $ownerId): RedirectResponse
     {
-        $this->gateway->post("/api/customers/owners/{$ownerId}/pets", $request->only(self::FIELDS));
+        $this->gateway->post("/api/customers/owners/{$ownerId}/pets", $this->payload($request), array_flip(self::FIELDS));
 
-        return redirect()->route('owners.show', $ownerId)->with('status', 'Nueva mascota registrada.');
+        return redirect("/owners/{$ownerId}")->with('message', 'New Pet has been Added');
     }
 
     public function edit(int $ownerId, int $petId): View
@@ -44,13 +45,29 @@ class PetController extends Controller
 
     public function update(Request $request, int $ownerId, int $petId): RedirectResponse
     {
-        $this->gateway->put("/api/customers/owners/{$ownerId}/pets/{$petId}", $request->only(self::FIELDS));
+        $this->gateway->put("/api/customers/owners/{$ownerId}/pets/{$petId}", $this->payload($request), array_flip(self::FIELDS));
 
-        return redirect()->route('owners.show', $ownerId)->with('status', 'Mascota actualizada.');
+        return redirect("/owners/{$ownerId}")->with('message', 'Pet details has been edited');
     }
 
+    /** Ordenados por nombre, como el select del monolito (PetTypeFormatter / findPetTypes). */
     private function types(): array
     {
         return $this->gateway->get('/api/customers/types')['data'];
+    }
+
+    private function payload(Request $request): array
+    {
+        $data = [];
+        foreach (self::FIELDS as $form => $api) {
+            $data[$api] = $request->input($form);
+        }
+
+        // El select envía el nombre del tipo (igual que el monolito); la API espera type_id.
+        // Un nombre desconocido se envía tal cual y la API responde 422 "is required" en `type`.
+        $type = collect($this->types())->firstWhere('name', $data['type_id']);
+        $data['type_id'] = $type['id'] ?? $data['type_id'];
+
+        return $data;
     }
 }

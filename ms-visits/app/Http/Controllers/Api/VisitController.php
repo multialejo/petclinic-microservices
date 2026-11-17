@@ -41,7 +41,7 @@ class VisitController extends Controller
         $pet = $customers->findPet((int) $data['pet_id']);
 
         if ((int) ($pet['owner_id'] ?? 0) !== (int) $data['owner_id']) {
-            throw ValidationException::withMessages(['pet_id' => 'El pet no pertenece al owner.']);
+            throw ValidationException::withMessages(['pet_id' => 'Pet does not belong to the owner']);
         }
 
         $visit = Visit::create([

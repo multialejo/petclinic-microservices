@@ -30,4 +30,9 @@ Route::get('/owners/{ownerId}/pets/{petId}/visits/new', [VisitController::class,
 Route::post('/owners/{ownerId}/pets/{petId}/visits/new', [VisitController::class, 'store'])->name('visits.store');
 
 Route::get('/vets.html', [VetController::class, 'index'])->name('vets.index');
+
+// Igual que CrashController del monolito: demuestra la página de error.
+Route::get('/oups', function () {
+    throw new RuntimeException('Expected: controller used to showcase what happens when an exception is thrown');
+})->name('oups');
 Route::redirect('/vets', '/vets.html');

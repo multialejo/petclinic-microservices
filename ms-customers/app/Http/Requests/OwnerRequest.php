@@ -23,10 +23,16 @@ class OwnerRequest extends FormRequest
         ];
     }
 
+    /** Mismos textos que el monolito (Bean Validation + messages.properties), para paridad en la UI. */
     public function messages(): array
     {
         return [
-            'telephone.regex' => 'El teléfono debe tener exactamente 10 dígitos.',
+            '*.required' => 'must not be blank',
+            'first_name.max' => 'size must be between 0 and 30',
+            'last_name.max' => 'size must be between 0 and 30',
+            'address.max' => 'size must be between 0 and 255',
+            'city.max' => 'size must be between 0 and 80',
+            'telephone.regex' => 'Telephone must be a 10-digit number',
         ];
     }
 }

@@ -1,31 +1,30 @@
-@extends('layouts.app')
-
-@section('title', $pet ? 'Editar mascota' : 'Agregar mascota')
+@extends('layouts.app', ['menu' => 'owners'])
 
 @section('content')
-    <h2>{{ $pet ? 'Editar mascota' : 'Agregar mascota' }}</h2>
-    <div class="card"><div class="card-body">
-        <p><span class="text-body-secondary">Dueño:</span> <strong>{{ $owner['first_name'] }} {{ $owner['last_name'] }}</strong></p>
-        <form method="POST" novalidate
-              action="{{ $pet ? route('pets.update', [$owner['id'], $pet['id']]) : route('pets.store', $owner['id']) }}">
-            @csrf
-            @include('partials.field', ['name' => 'name', 'label' => 'Nombre', 'value' => $pet['name'] ?? '', 'attrs' => 'maxlength="30" required'])
-            @include('partials.field', ['name' => 'birth_date', 'label' => 'Fecha de nacimiento', 'type' => 'date', 'value' => $pet['birth_date'] ?? '', 'attrs' => 'max="'.now()->toDateString().'" required'])
-            <div class="mb-3">
-                <label for="type_id" class="form-label">Tipo</label>
-                @php($selected = (string) old('type_id', $pet['type']['id'] ?? ''))
-                <select id="type_id" name="type_id" class="form-select @error('type_id') is-invalid @enderror" required>
-                    <option value="" disabled @selected($selected === '')>Seleccione…</option>
-                    @foreach ($types as $type)
-                        <option value="{{ $type['id'] }}" @selected($selected === (string) $type['id'])>{{ $type['name'] }}</option>
-                    @endforeach
-                </select>
-                @error('type_id')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-            <button class="btn btn-primary" type="submit">{{ $pet ? 'Actualizar mascota' : 'Agregar mascota' }}</button>
-            <a class="btn btn-link" href="{{ route('owners.show', $owner['id']) }}">Cancelar</a>
-        </form>
-    </div></div>
+  <h2>
+@unless ($pet)
+    New
+@endunless
+    <span>Pet</span>
+  </h2>
+  <form class="form-horizontal" method="post">
+    @csrf
+    <input type="hidden" name="id" value="{{ $pet['id'] ?? '' }}" />
+    <div class="form-group has-feedback">
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Owner</label>
+        <div class="col-sm-10">
+          <span>{{ $owner['first_name'] }} {{ $owner['last_name'] }}</span>
+        </div>
+      </div>
+@include('partials.input', ['label' => 'Name', 'name' => 'name', 'type' => 'text', 'value' => $pet['name'] ?? ''])
+@include('partials.input', ['label' => 'Birth Date', 'name' => 'birthDate', 'type' => 'date', 'value' => $pet['birth_date'] ?? ''])
+@include('partials.select', ['label' => 'Type', 'name' => 'type', 'items' => $types, 'selected' => $pet['type']['name'] ?? ''])
+    </div>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button class="btn btn-primary" type="submit">{{ $pet ? 'Update Pet' : 'Add Pet' }}</button>
+      </div>
+    </div>
+  </form>
 @endsection

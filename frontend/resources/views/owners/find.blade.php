@@ -1,24 +1,33 @@
-@extends('layouts.app')
-
-@section('title', 'Buscar dueños')
+@extends('layouts.app', ['menu' => 'owners'])
 
 @section('content')
-    <h2>Buscar dueños</h2>
-    <div class="card"><div class="card-body">
-        <form method="GET" action="{{ route('owners.index') }}" class="row g-2 align-items-start">
-            <div class="col-sm-6">
-                <label for="last_name" class="visually-hidden">Apellido</label>
-                <input id="last_name" name="last_name" value="{{ old('last_name') }}" maxlength="30"
-                       placeholder="Apellido (vacío = todos)"
-                       class="form-control @error('last_name') is-invalid @enderror">
-                @error('last_name')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+  <h2>Find Owners</h2>
+
+  <form action="/owners" method="get" class="form-horizontal" id="search-owner-form">
+    <div class="form-group">
+      <div class="control-group" id="lastNameGroup">
+        <label class="col-sm-2 control-label">Last Name</label>
+        <div class="col-sm-10">
+          <input class="form-control" size="30" maxlength="80" id="lastName" name="lastName" value="{{ old('lastName') }}" />
+          <span class="help-inline">
+@if ($errors->any())
+            <div>
+@foreach ($errors->all() as $err)
+              <p>{{ $err }}</p>
+@endforeach
             </div>
-            <div class="col-auto">
-                <button class="btn btn-primary" type="submit">Buscar</button>
-            </div>
-        </form>
-    </div></div>
-    <a class="btn btn-outline-secondary mt-3" href="{{ route('owners.create') }}">Registrar dueño</a>
+@endif
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary">Find Owner</button>
+      </div>
+    </div>
+
+    <a class="btn btn-primary" href="/owners/new">Add Owner</a>
+
+  </form>
 @endsection

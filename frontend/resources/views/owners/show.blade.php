@@ -1,60 +1,97 @@
-@extends('layouts.app')
-
-@section('title', $owner['first_name'].' '.$owner['last_name'])
+@extends('layouts.app', ['menu' => 'owners'])
 
 @section('content')
-    <h2>Información del dueño</h2>
-    <div class="card mb-3"><div class="card-body">
-        <dl class="row mb-0">
-            <dt class="col-sm-3">Nombre</dt><dd class="col-sm-9 fw-semibold">{{ $owner['first_name'] }} {{ $owner['last_name'] }}</dd>
-            <dt class="col-sm-3">Dirección</dt><dd class="col-sm-9">{{ $owner['address'] }}</dd>
-            <dt class="col-sm-3">Ciudad</dt><dd class="col-sm-9">{{ $owner['city'] }}</dd>
-            <dt class="col-sm-3">Teléfono</dt><dd class="col-sm-9">{{ $owner['telephone'] }}</dd>
+  <h2>Owner Information</h2>
+
+@if (session('message'))
+  <div class="alert alert-success" id="success-message">
+    <span>{{ session('message') }}</span>
+  </div>
+@endif
+
+@if ($error ?? session('error'))
+  <div class="alert alert-danger" id="error-message">
+    <span>{{ $error ?? session('error') }}</span>
+  </div>
+@endif
+
+  <table class="table table-striped">
+    <tr>
+      <th>Name</th>
+      <td><b>{{ $owner['first_name'] }} {{ $owner['last_name'] }}</b></td>
+    </tr>
+    <tr>
+      <th>Address</th>
+      <td>{{ $owner['address'] }}</td>
+    </tr>
+    <tr>
+      <th>City</th>
+      <td>{{ $owner['city'] }}</td>
+    </tr>
+    <tr>
+      <th>Telephone</th>
+      <td>{{ $owner['telephone'] }}</td>
+    </tr>
+  </table>
+
+  <a href="{{ $owner['id'] }}/edit" class="btn btn-primary">Edit
+    Owner</a>
+  <a href="{{ $owner['id'] }}/pets/new" class="btn btn-primary">Add
+    New Pet</a>
+
+  <br />
+  <br />
+  <br />
+  <h2>Pets and Visits</h2>
+
+  <table class="table table-striped">
+
+@foreach ($owner['pets'] as $pet)
+    <tr>
+      <td valign="top">
+        <dl class="dl-horizontal">
+          <dt>Name</dt>
+          <dd>{{ $pet['name'] }}</dd>
+          <dt>Birth Date</dt>
+          <dd>{{ $pet['birth_date'] }}</dd>
+          <dt>Type</dt>
+          <dd>{{ $pet['type']['name'] ?? '' }}</dd>
         </dl>
-    </div></div>
-    <a class="btn btn-primary" href="{{ route('owners.edit', $owner['id']) }}">Editar dueño</a>
-    <a class="btn btn-primary" href="{{ route('pets.create', $owner['id']) }}">Agregar mascota</a>
+      </td>
+      <td valign="top">
+        <table class="table-condensed">
+          <thead>
+            <tr>
+              <th>Visit Date</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+@foreach ($visitsByPet->get($pet['id'], []) as $visit)
+          <tr>
+            <td>{{ $visit['date'] }}</td>
+            <td>{{ $visit['description'] }}</td>
+          </tr>
+@endforeach
+          <tr>
+            <td><a href="{{ $owner['id'] }}/pets/{{ $pet['id'] }}/edit">Edit Pet</a></td>
+            <td><a href="{{ $owner['id'] }}/pets/{{ $pet['id'] }}/visits/new">Add Visit</a></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+@endforeach
 
-    <h2 class="mt-4">Mascotas y visitas</h2>
+  </table>
+  <script>
+    // Function to hide the success and error messages after 3 seconds
+    function hideMessages() {
+      setTimeout(function () {
+        document.getElementById("success-message").style.display = "none";
+        document.getElementById("error-message").style.display = "none";
+      }, 3000); // 3000 milliseconds (3 seconds)
+    }
 
-    @if ($visitsUnavailable)
-        <div class="alert alert-warning">
-            El servicio de visitas no está disponible en este momento. Se muestran los datos del dueño y
-            sus mascotas; el historial de visitas aparecerá cuando el servicio se recupere.
-        </div>
-    @endif
-
-    @forelse ($owner['pets'] as $pet)
-        <div class="card mb-3"><div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <dl class="row mb-0">
-                        <dt class="col-5">Nombre</dt><dd class="col-7">{{ $pet['name'] }}</dd>
-                        <dt class="col-5">Nacimiento</dt><dd class="col-7">{{ $pet['birth_date'] }}</dd>
-                        <dt class="col-5">Tipo</dt><dd class="col-7">{{ $pet['type']['name'] ?? '' }}</dd>
-                    </dl>
-                </div>
-                <div class="col-md-8">
-                    <table class="table table-sm mb-2">
-                        <thead><tr><th style="width: 9rem">Fecha de visita</th><th>Descripción</th></tr></thead>
-                        <tbody>
-                        @unless ($visitsUnavailable)
-                            @forelse ($visitsByPet->get($pet['id'], []) as $visit)
-                                <tr><td>{{ $visit['date'] }}</td><td>{{ $visit['description'] }}</td></tr>
-                            @empty
-                                <tr><td colspan="2" class="text-body-secondary">Sin visitas</td></tr>
-                            @endforelse
-                        @else
-                            <tr><td colspan="2" class="text-body-secondary">No disponible</td></tr>
-                        @endunless
-                        </tbody>
-                    </table>
-                    <a href="{{ route('pets.edit', [$owner['id'], $pet['id']]) }}">Editar mascota</a>
-                    · <a href="{{ route('visits.create', [$owner['id'], $pet['id']]) }}">Agregar visita</a>
-                </div>
-            </div>
-        </div></div>
-    @empty
-        <p class="text-body-secondary">Este dueño aún no tiene mascotas.</p>
-    @endforelse
+    // Call the function to hide messages
+    hideMessages();
+  </script>
 @endsection
