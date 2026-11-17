@@ -10,7 +10,7 @@ lógica de dominio: eso se agrega en la Fase 4, a partir del diseño de las Fase
 .
 ├── docker-compose.yml   # Orquesta los 3 microservicios (PHP-FPM + Nginx) + 3 bases MySQL aisladas
 ├── .env.example         # Variables de la raíz (HOST_UID/HOST_GID, puertos)
-├── gateway/             # API Gateway (tecnología pendiente, Fase 2)
+├── gateway/             # API Gateway Nginx (nginx.conf): punto único de entrada en :8000
 ├── frontend/            # Frontend desacoplado (tecnología pendiente, Fase 4)
 ├── ms-vets/             # Laravel 13 (API): vets, specialties, vet_specialties
 ├── ms-customers/        # Laravel 13 (API): owners, pets, types
@@ -31,6 +31,7 @@ Cada `ms-*` es un proyecto Laravel estándar con:
 
 | Servicio       | URL en el host          | Hostname interno (red `petclinic`) | Contenedor PHP-FPM  | Base de datos  | Usuario BD  | Puerto BD (host) |
 |----------------|-------------------------|------------------------------------|---------------------|----------------|-------------|------------------|
+| **gateway**    | http://localhost:8000   | `http://gateway`                   | —                   | —              | —           | —                |
 | ms-vets        | http://localhost:8001   | `http://ms-vets`                   | `ms-vets-app`       | `db_vets`      | `vets`      | 33061            |
 | ms-customers   | http://localhost:8002   | `http://ms-customers`              | `ms-customers-app`  | `db_customers` | `customers` | 33062            |
 | ms-visits      | http://localhost:8003   | `http://ms-visits`                 | `ms-visits-app`     | `db_visits`    | `visits`    | 33063            |
@@ -70,7 +71,9 @@ for s in ms-vets ms-customers ms-visits; do
 done
 ```
 
-Comprobación rápida: `curl -I http://localhost:8001/up` (y 8002, 8003) debe devolver `200`.
+Comprobación rápida: `curl -I http://localhost:8001/up` (y 8002, 8003) debe devolver `200`, y
+`curl http://localhost:8000/health` (gateway) `{"status":"ok"}`. El cliente (frontend, Postman) debe usar
+siempre el gateway (`http://localhost:8000/api/...`); los puertos 8001–8003 quedan para depuración. Ver `gateway/README.md`.
 
 ## Comandos útiles
 
@@ -85,7 +88,15 @@ docker compose down                                   # detener todo (añadir -v
 
 ## Pendiente (decisiones de Fases 2 y 4)
 
-- **API Gateway**: Nginx / KrakenD / Kong → `gateway/` y nuevo servicio en `docker-compose.yml`.
+> Las decisiones de la Fase 2 ya están tomadas en `../docs/fase2/README.md`:
+> - gateway **Nginx** en el puerto 8000;
+> - token interno `X-Internal-Token` (Sanctum sin uso);
+> - Redis + worker en ms-visits;
+> - contrato REST y seeders.
+>
+> La lista de abajo queda como checklist de implementación.
+
+- [x] **API Gateway**: Nginx en `gateway/nginx.conf`, servicio `gateway` en `docker-compose.yml` (puerto 8000).
 - **Frontend**: Blade/Livewire, Vue/React o Next.js → `frontend/`.
 - **Autenticación entre servicios**: Sanctum ya está instalado; falta decidir Sanctum vs. token interno.
 - **Redis** para colas/eventos asíncronos (bonus de la Iteración 3).
