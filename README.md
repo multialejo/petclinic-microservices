@@ -3,6 +3,8 @@
 Repositorio (monorepo) de la reingeniería de Spring PetClinic hacia microservicios en Laravel.
 Contiene la infraestructura de la **Fase 3** y la migración de dominio de la **Fase 4** (Strangler Fig):
 ms-vets, ms-customers, ms-visits y un frontend desacoplado. Informe: `../docs/fase4/README.md`.
+La **Fase 5** (OpenAPI con Scramble, métricas y tabla comparativa) está en `../docs/fase5/README.md`;
+los scripts viven en `metrics/` y `hurl-tests/09-*`. UI de cada API en `http://localhost:800{1,2,3}/docs/api`.
 
 ## Estructura
 
