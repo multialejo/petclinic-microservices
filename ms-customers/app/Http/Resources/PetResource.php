@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Pet. Los campos dependen de lo cargado: en el listado de owners solo {id, name};
- * en la ficha del owner con `type`; en GET /api/pets/{id} además `owner` (docs/fase2 §4).
+ * en la ficha del owner con `type`; en GET /api/pets/{id} además `owner`.
  *
  * @mixin \App\Models\Pet
  */

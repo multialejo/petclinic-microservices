@@ -7,7 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-/** CU-05 (registrar mascota), CU-06 (editar mascota) y CU-07 (tipos, para el select). */
+/** Registrar y editar mascotas; tipos para el select. */
 class PetController extends Controller
 {
     /** Campo del formulario (monolito) => campo de la API. */

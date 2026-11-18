@@ -6,7 +6,7 @@ use App\Http\Controllers\VetController;
 use App\Http\Controllers\VisitController;
 use Illuminate\Support\Facades\Route;
 
-// Mismas URLs que el monolito (docs/fase1/endpoints.md) para que la migración sea transparente al usuario.
+// Mismas URLs que el monolito para que la migración sea transparente al usuario.
 Route::view('/', 'welcome')->name('home');
 
 Route::get('/owners/find', [OwnerController::class, 'find'])->name('owners.find');

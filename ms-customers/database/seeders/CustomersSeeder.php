@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Datos iniciales de ms-customers, tomados de spring-petclinic/src/main/resources/db/mysql/data.sql
- * conservando los ids originales (docs/fase2 §7). Esperado: 6 types, 10 owners, 13 pets.
+ * conservando los ids originales. Esperado: 6 types, 10 owners, 13 pets.
  */
 class CustomersSeeder extends Seeder
 {

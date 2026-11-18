@@ -7,7 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-/** CU-09: veterinarios y especialidades (paginado de 5, como /vets.html del As-Is). */
+/** Veterinarios y especialidades (paginado de 5, como /vets.html del monolito original). */
 class VetController extends Controller
 {
     public function __construct(private GatewayClient $gateway) {}

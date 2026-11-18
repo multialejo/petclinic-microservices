@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Schema;
  * Esquema de ms-visits (bounded context Visitas).
  *
  * visits.pet_id es una REFERENCIA LÓGICA a ms-customers: indexada pero SIN llave foránea
- * (Database-per-Service, docs/fase2 §2). La existencia del pet se verifica por HTTP al crear.
+ * (Database-per-Service). La existencia del pet se verifica por HTTP al crear.
  * visit_audits la escribe el worker de colas al procesar el evento VisitCreated (bonus asíncrono).
  */
 return new class extends Migration

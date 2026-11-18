@@ -11,7 +11,7 @@ class Vet extends Model
 
     protected $fillable = ['first_name', 'last_name'];
 
-    /** Relación interna del dominio Vets (permitida). Ordenadas por nombre, como el As-Is. */
+    /** Relación interna del dominio Vets (permitida). Ordenadas por nombre, como el monolito original. */
     public function specialties(): BelongsToMany
     {
         return $this->belongsToMany(Specialty::class, 'vet_specialties')->orderBy('name');

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Datos iniciales de ms-vets, tomados de spring-petclinic/src/main/resources/db/mysql/data.sql
- * conservando los ids originales (docs/fase2 §7). Esperado: 6 vets, 3 specialties, 5 vet_specialties.
+ * conservando los ids originales. Esperado: 6 vets, 3 specialties, 5 vet_specialties.
  */
 class VetsSeeder extends Seeder
 {

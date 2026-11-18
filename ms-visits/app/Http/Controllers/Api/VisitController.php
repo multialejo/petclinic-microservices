@@ -16,8 +16,9 @@ use Illuminate\Validation\ValidationException;
 class VisitController extends Controller
 {
     /**
-     * CU-03 / CU-08: visitas de varios pets en una sola llamada (?pet_ids=1,2,3).
-     * Orden: pet_id y luego fecha ascendente (@OrderBy("date ASC") del As-Is). No consulta a ms-customers.
+     * Listar visitas.
+     *
+     * Visitas de varios pets (`?pet_ids=1,2,3`).
      */
     public function index(IndexVisitsRequest $request): AnonymousResourceCollection
     {
@@ -31,8 +32,12 @@ class VisitController extends Controller
     }
 
     /**
-     * CU-08: agendar visita. Antes de guardar se verifica por HTTP en ms-customers que el pet exista
-     * y pertenezca al owner (404 / 422 / 503 controlados, docs/fase2 §5).
+     * Agendar visita.
+     *
+     * Valida en ms-customers que el pet pertenezca al owner.
+     *
+     * @response 404 array{message: string}
+     * @response 503 array{message: string}
      */
     public function store(StoreVisitRequest $request, CustomersClient $customers): JsonResponse
     {

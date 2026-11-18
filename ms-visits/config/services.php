@@ -41,7 +41,7 @@ return [
         'token' => env('INTERNAL_API_TOKEN'),
     ],
 
-    // ms-customers: validación síncrona del pet al crear una visita (docs/fase2 §5).
+    // ms-customers: validación síncrona del pet al crear una visita.
     'customers' => [
         'url' => env('CUSTOMERS_URL', 'http://ms-customers'),
         'token' => env('INTERNAL_API_TOKEN'),

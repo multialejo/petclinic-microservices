@@ -1,4 +1,4 @@
-# PetClinic - microservicios Laravel (infraestructura base, Fase 3)
+# PetClinic - microservicios Laravel (infraestructura base)
 #
 # Orquestación propia (sin Laravel Sail). Cada microservicio se compone de:
 #   - ms-<x>-app : PHP 8.4-FPM (imagen propia, ./ms-<x>/docker/Dockerfile)
@@ -16,7 +16,7 @@
 # Secreto interno: INTERNAL_API_TOKEN se define una sola vez en el .env de la raíz y se inyecta
 # como variable de entorno en todos los contenedores PHP (Laravel la prioriza sobre ms-*/.env).
 #
-# Frontend desacoplado (Fase 4, Iteración 4):
+# Frontend desacoplado:
 #   - frontend-app : Laravel + Blade en PHP-FPM, SIN base de datos; solo llama a http://gateway
 #   - frontend     : Nginx sidecar en el puerto 3000
 
@@ -45,7 +45,7 @@ x-mysql: &mysql
 
 services:
     # ----------------------------------------------------------- Gateway
-    # Sin depends_on a propósito (ADR-10): resuelve los upstreams en cada petición, así arranca y
+    # Sin depends_on a propósito: resuelve los upstreams en cada petición, así arranca y
     # sigue respondiendo (503 JSON en la ruta afectada) aunque algún ms-* esté apagado.
     gateway:
         <<: *nginx

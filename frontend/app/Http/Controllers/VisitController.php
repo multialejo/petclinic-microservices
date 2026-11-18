@@ -8,7 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-/** CU-08: agendar visita (datos del pet + visitas previas, como el formulario del As-Is). */
+/** Agendar visita (datos del pet + visitas previas, como el formulario del monolito original). */
 class VisitController extends Controller
 {
     public function __construct(private GatewayClient $gateway) {}
@@ -28,7 +28,7 @@ class VisitController extends Controller
         return view('visits.form', [
             'pet' => $pet,
             'visits' => $visits,
-            'defaultDate' => now()->addDay()->toDateString(), // As-Is: fecha por defecto y mínima = mañana
+            'defaultDate' => now()->addDay()->toDateString(), // Como el monolito: fecha por defecto y mínima = mañana
         ]);
     }
 

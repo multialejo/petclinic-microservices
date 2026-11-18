@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 /**
  * Esquema de ms-vets (bounded context Veterinarios). Paridad con
  * spring-petclinic/src/main/resources/db/mysql/schema.sql: sin timestamps,
- * FK solo dentro del propio dominio (docs/fase2 §2).
+ * FK solo dentro del propio dominio.
  */
 return new class extends Migration
 {

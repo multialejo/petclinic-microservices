@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Datos iniciales de ms-visits, tomados de spring-petclinic/src/main/resources/db/mysql/data.sql
- * conservando los ids originales (docs/fase2 §7). Esperado: 4 visits (pet_id 7, 8, 8, 7).
+ * conservando los ids originales. Esperado: 4 visits (pet_id 7, 8, 8, 7).
  * No se valida contra ms-customers: los pet_id provienen del mismo script que CustomersSeeder.
  */
 class VisitsSeeder extends Seeder

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/** Lectura en lote: ?pet_ids=1,2,3 (obligatorio, máx. 50). docs/fase2 §4. */
+/** Lectura en lote: ?pet_ids=1,2,3 (obligatorio, máx. 50). */
 class IndexVisitsRequest extends FormRequest
 {
     public function authorize(): bool

@@ -1,6 +1,6 @@
 # Frontend — PetClinic (Laravel + Blade)
 
-Interfaz ligera de la Fase 4, Iteración 4. Reemplaza las vistas Thymeleaf del monolito.
+Interfaz ligera. Reemplaza las vistas Thymeleaf del monolito.
 
 - **No tiene base de datos.** `DB_CONNECTION=null`, las sesiones viven en una cookie cifrada y la caché en archivo.
 - **Consume exclusivamente el API Gateway** (`GATEWAY_URL=http://gateway`). La llamada sale del servidor, así que no depende de CORS.
@@ -22,10 +22,10 @@ Servicio publicado en http://localhost:3000 (`frontend` = Nginx sidecar; `fronte
 |---|---|
 | `app/Services/GatewayClient.php` | Único punto de salida HTTP. 404 → `abort(404)`; 422 → `ValidationException` (errores junto al campo); 5xx o caída → `GatewayUnavailableException` |
 | `app/Exceptions/GatewayUnavailableException.php` | Gateway caído; `bootstrap/app.php` la muestra con `error.blade.php` (503) |
-| `app/Http/Controllers/*` | CU-01…09 (owners, pets, visits, vets) |
+| `app/Http/Controllers/*` | Owners, pets, visits y vets |
 | `resources/views/*` | Blade + Bootstrap 5 (CDN) |
 
-## Comportamientos de UI del As-Is (docs/fase2 §4)
+## Comportamientos de UI del monolito original
 
 | Comportamiento | Dónde |
 |---|---|

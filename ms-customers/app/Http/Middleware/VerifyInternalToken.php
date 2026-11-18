@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Protege rutas solo internas (servicio -> servicio) con el secreto compartido
- * INTERNAL_API_TOKEN, enviado en la cabecera X-Internal-Token (docs/fase2 §5, ADR-05).
+ * INTERNAL_API_TOKEN, enviado en la cabecera X-Internal-Token.
  *
  * Falla cerrado: si el token no está configurado, ninguna petición pasa.
  * El gateway vacía esta cabecera en las peticiones externas.

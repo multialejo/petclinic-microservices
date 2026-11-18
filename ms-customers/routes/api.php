@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\PetController;
 use App\Http\Controllers\Api\PetTypeController;
 use Illuminate\Support\Facades\Route;
 
-// Contrato: docs/fase2/README.md §4 (ms-customers). Público vía gateway como /api/customers/{resto}.
+// Contrato de ms-customers. Público vía gateway como /api/customers/{resto}.
 Route::get('/owners', [OwnerController::class, 'index']);
 Route::post('/owners', [OwnerController::class, 'store']);
 Route::get('/owners/{owner}', [OwnerController::class, 'show'])->whereNumber('owner');
