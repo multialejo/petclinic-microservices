@@ -1,0 +1,10 @@
+@extends('layouts.app', ['menu' => 'home'])
+
+@section('content')
+  <h2>Welcome</h2>
+  <div class="row">
+    <div class="col-md-12">
+      <img class="img-responsive" src="/resources/images/pets.png" />
+    </div>
+  </div>
+@endsection

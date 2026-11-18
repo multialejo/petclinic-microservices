@@ -1,0 +1,97 @@
+@extends('layouts.app', ['menu' => 'owners'])
+
+@section('content')
+  <h2>Owner Information</h2>
+
+@if (session('message'))
+  <div class="alert alert-success" id="success-message">
+    <span>{{ session('message') }}</span>
+  </div>
+@endif
+
+@if ($error ?? session('error'))
+  <div class="alert alert-danger" id="error-message">
+    <span>{{ $error ?? session('error') }}</span>
+  </div>
+@endif
+
+  <table class="table table-striped">
+    <tr>
+      <th>Name</th>
+      <td><b>{{ $owner['first_name'] }} {{ $owner['last_name'] }}</b></td>
+    </tr>
+    <tr>
+      <th>Address</th>
+      <td>{{ $owner['address'] }}</td>
+    </tr>
+    <tr>
+      <th>City</th>
+      <td>{{ $owner['city'] }}</td>
+    </tr>
+    <tr>
+      <th>Telephone</th>
+      <td>{{ $owner['telephone'] }}</td>
+    </tr>
+  </table>
+
+  <a href="{{ $owner['id'] }}/edit" class="btn btn-primary">Edit
+    Owner</a>
+  <a href="{{ $owner['id'] }}/pets/new" class="btn btn-primary">Add
+    New Pet</a>
+
+  <br />
+  <br />
+  <br />
+  <h2>Pets and Visits</h2>
+
+  <table class="table table-striped">
+
+@foreach ($owner['pets'] as $pet)
+    <tr>
+      <td valign="top">
+        <dl class="dl-horizontal">
+          <dt>Name</dt>
+          <dd>{{ $pet['name'] }}</dd>
+          <dt>Birth Date</dt>
+          <dd>{{ $pet['birth_date'] }}</dd>
+          <dt>Type</dt>
+          <dd>{{ $pet['type']['name'] ?? '' }}</dd>
+        </dl>
+      </td>
+      <td valign="top">
+        <table class="table-condensed">
+          <thead>
+            <tr>
+              <th>Visit Date</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+@foreach ($visitsByPet->get($pet['id'], []) as $visit)
+          <tr>
+            <td>{{ $visit['date'] }}</td>
+            <td>{{ $visit['description'] }}</td>
+          </tr>
+@endforeach
+          <tr>
+            <td><a href="{{ $owner['id'] }}/pets/{{ $pet['id'] }}/edit">Edit Pet</a></td>
+            <td><a href="{{ $owner['id'] }}/pets/{{ $pet['id'] }}/visits/new">Add Visit</a></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+@endforeach
+
+  </table>
+  <script>
+    // Function to hide the success and error messages after 3 seconds
+    function hideMessages() {
+      setTimeout(function () {
+        document.getElementById("success-message").style.display = "none";
+        document.getElementById("error-message").style.display = "none";
+      }, 3000); // 3000 milliseconds (3 seconds)
+    }
+
+    // Call the function to hide messages
+    hideMessages();
+  </script>
+@endsection

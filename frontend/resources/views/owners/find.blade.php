@@ -1,0 +1,33 @@
+@extends('layouts.app', ['menu' => 'owners'])
+
+@section('content')
+  <h2>Find Owners</h2>
+
+  <form action="/owners" method="get" class="form-horizontal" id="search-owner-form">
+    <div class="form-group">
+      <div class="control-group" id="lastNameGroup">
+        <label class="col-sm-2 control-label">Last Name</label>
+        <div class="col-sm-10">
+          <input class="form-control" size="30" maxlength="80" id="lastName" name="lastName" value="{{ old('lastName') }}" />
+          <span class="help-inline">
+@if ($errors->any())
+            <div>
+@foreach ($errors->all() as $err)
+              <p>{{ $err }}</p>
+@endforeach
+            </div>
+@endif
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary">Find Owner</button>
+      </div>
+    </div>
+
+    <a class="btn btn-primary" href="/owners/new">Add Owner</a>
+
+  </form>
+@endsection
