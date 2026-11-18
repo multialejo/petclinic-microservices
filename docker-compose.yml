@@ -6,12 +6,22 @@
 #   - db-<x>     : MySQL 8.4 propio (Database-per-Service)
 # Todos comparten la red bridge `petclinic`; entre servicios se usa http://ms-<x>.
 #
-# Pendiente de decisiones de Fase 2 / Fase 4 (intencionalmente NO incluido aún):
-#   - gateway  : Nginx / KrakenD / Kong  -> ./gateway
+# Punto de entrada público:
+#   - gateway    : Nginx (./gateway/nginx.conf) en el puerto 8000 -> enruta /api/* a cada ms-<x>
+#
+# Mensajería asíncrona (ms-visits):
+#   - redis             : cola de eventos (VisitCreated)
+#   - ms-visits-worker  : misma imagen que ms-visits-app ejecutando `php artisan queue:work`
+#
+# Secreto interno: INTERNAL_API_TOKEN se define una sola vez en el .env de la raíz y se inyecta
+# como variable de entorno en todos los contenedores PHP (Laravel la prioriza sobre ms-*/.env).
+#
+# Pendiente de decisiones de Fase 4 (intencionalmente NO incluido aún):
 #   - frontend : Blade / Livewire / Vue / Next.js -> ./frontend
-#   - redis    : colas para eventos asíncronos (Iteración 3, bonus)
 
 x-php-app: &php-app
+    environment:
+        INTERNAL_API_TOKEN: '${INTERNAL_API_TOKEN:-}'
     extra_hosts:
         - 'host.docker.internal:host-gateway'
     networks:
@@ -33,6 +43,21 @@ x-mysql: &mysql
         timeout: 5s
 
 services:
+    # ----------------------------------------------------------- Gateway
+    # Sin depends_on a propósito (ADR-10): resuelve los upstreams en cada petición, así arranca y
+    # sigue respondiendo (503 JSON en la ruta afectada) aunque algún ms-* esté apagado.
+    gateway:
+        <<: *nginx
+        ports:
+            - '${GATEWAY_PORT:-8000}:80'
+        volumes:
+            - './gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro'
+        healthcheck:
+            test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1/health || exit 1']
+            interval: 10s
+            retries: 3
+            timeout: 3s
+
     # -------------------------------------------------------------- Vets
     ms-vets-app:
         <<: *php-app
@@ -121,6 +146,25 @@ services:
         depends_on:
             db-visits:
                 condition: service_healthy
+            redis:
+                condition: service_healthy
+
+    # Consumidor de la cola Redis. queue:work mantiene el código en memoria:
+    # tras cambiar jobs/listeners, `docker compose restart ms-visits-worker`.
+    ms-visits-worker:
+        <<: *php-app
+        image: petclinic/ms-visits:dev
+        command: ['php', 'artisan', 'queue:work', 'redis', '--sleep=1', '--tries=3', '--timeout=60']
+        restart: unless-stopped
+        volumes:
+            - './ms-visits:/var/www/html'
+        depends_on:
+            ms-visits-app:
+                condition: service_started
+            db-visits:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
 
     ms-visits:
         <<: *nginx
@@ -143,6 +187,19 @@ services:
             MYSQL_PASSWORD: secret
         volumes:
             - 'db-visits-data:/var/lib/mysql'
+
+    # ------------------------------------------------------------- Redis
+    # Solo para colas (sin puerto publicado ni persistencia: un job pendiente se pierde si se borra
+    # el contenedor, aceptable en desarrollo). Se depura con `docker compose exec redis redis-cli`.
+    redis:
+        image: 'redis:7-alpine'
+        networks:
+            - petclinic
+        healthcheck:
+            test: ['CMD', 'redis-cli', 'ping']
+            interval: 5s
+            retries: 10
+            timeout: 3s
 
 networks:
     petclinic:

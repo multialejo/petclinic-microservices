@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    // Secreto compartido para llamadas servicio -> servicio (cabecera X-Internal-Token).
+    // Se inyecta desde el .env de la raíz vía docker-compose (una sola fuente para los 3 servicios).
+    'internal' => [
+        'token' => env('INTERNAL_API_TOKEN'),
+    ],
+
 ];

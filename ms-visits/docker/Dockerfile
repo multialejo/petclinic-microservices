@@ -1,5 +1,6 @@
 # ms runtime: PHP 8.4-FPM (alpine) con solo las extensiones que usa el servicio.
 # Nginx corre como contenedor sidecar aparte (ver nginx.conf y docker-compose.yml).
+# ms-visits añade phpredis (REDIS_CLIENT=phpredis): cola de eventos VisitCreated.
 FROM php:8.4-fpm-alpine
 
 ARG HOST_UID=1000
@@ -8,6 +9,8 @@ ARG HOST_GID=1000
 RUN apk add --no-cache icu-libs libzip \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS icu-dev libzip-dev linux-headers \
     && docker-php-ext-install -j"$(nproc)" pdo_mysql bcmath intl zip opcache pcntl \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
     && apk del .build-deps
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
