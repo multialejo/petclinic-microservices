@@ -1,9 +1,8 @@
 # PetClinic — Reingeniería a microservicios Laravel
 
 Repositorio (monorepo) de la reingeniería de Spring PetClinic hacia microservicios en Laravel.
-Contiene la infraestructura de la **Fase 3** y la migración de dominio de la **Fase 4** (Strangler Fig):
-ms-vets, ms-customers, ms-visits y un frontend desacoplado.
-La **Fase 5** añade documentación OpenAPI con Scramble: UI de cada API en `http://localhost:800{1,2,3}/docs/api`.
+Contiene la infraestructura y la migración de dominio (Strangler Fig): ms-vets, ms-customers, ms-visits y un
+frontend desacoplado. Cada API publica su documentación OpenAPI con Scramble en `http://localhost:800{1,2,3}/docs/api`.
 
 ## Estructura
 
@@ -20,7 +19,7 @@ La **Fase 5** añade documentación OpenAPI con Scramble: UI de cada API en `htt
 
 Cada `ms-*` es un proyecto Laravel estándar con:
 
-- `php artisan install:api` ejecutado (`routes/api.php`; Sanctum instalado pero sin uso, ADR-05).
+- `php artisan install:api` ejecutado (`routes/api.php`; Sanctum instalado pero sin uso).
 - Middleware `internal.token` (`app/Http/Middleware/VerifyInternalToken.php`) para rutas solo internas: exige la
   cabecera `X-Internal-Token` igual a `INTERNAL_API_TOKEN` (falla cerrado si no está configurado).
 - Infraestructura Docker propia:
@@ -95,14 +94,14 @@ siempre el gateway (`http://localhost:8000/api/...`); los puertos 8001–8003 qu
 
 ## API (vía gateway)
 
-| CU | Método y ruta |
+| Operación | Método y ruta |
 |---|---|
-| CU-01 / 02 | `GET` / `POST /api/customers/owners` (`?last_name=&page=`) |
-| CU-03 / 04 | `GET` / `PUT /api/customers/owners/{id}` + `GET /api/visits?pet_ids=1,2` |
-| CU-05 / 06 | `POST /api/customers/owners/{id}/pets`, `GET /api/customers/pets/{id}`, `PUT /api/customers/owners/{o}/pets/{p}` |
-| CU-07 | `GET /api/customers/types` |
-| CU-08 | `POST /api/visits` (`owner_id, pet_id, date, description`): verifica el pet en ms-customers y encola `VisitCreated` |
-| CU-09 | `GET /api/vets?page=` |
+| Buscar / registrar owners | `GET` / `POST /api/customers/owners` (`?last_name=&page=`) |
+| Ficha / editar owner | `GET` / `PUT /api/customers/owners/{id}` + `GET /api/visits?pet_ids=1,2` |
+| Registrar / editar mascota | `POST /api/customers/owners/{id}/pets`, `GET /api/customers/pets/{id}`, `PUT /api/customers/owners/{o}/pets/{p}` |
+| Tipos de mascota | `GET /api/customers/types` |
+| Agendar visita | `POST /api/visits` (`owner_id, pet_id, date, description`): verifica el pet en ms-customers y encola `VisitCreated` |
+| Veterinarios | `GET /api/vets?page=` |
 
 ## Comandos útiles
 
@@ -118,12 +117,12 @@ docker compose stop ms-vets ms-vets-app                # apagar un servicio (pru
 docker compose down                                   # detener todo (añadir -v para borrar las bases)
 ```
 
-## Estado (checklist Fases 3 y 4)
+## Estado
 
 - [x] **API Gateway**: Nginx en `gateway/nginx.conf` (puerto 8000).
 - [x] **Autenticación entre servicios**: token interno `INTERNAL_API_TOKEN` + middleware `internal.token`.
 - [x] **Redis** + `ms-visits-worker`: evento `VisitCreated` → auditoría (`visit_audits`) + notificación simulada.
-- [x] **ms-vets** (Iteración 1), **ms-customers** (Iteración 2), **ms-visits** (Iteración 3): migraciones, modelos,
+- [x] **ms-vets**, **ms-customers**, **ms-visits**: migraciones, modelos,
   API Resources, FormRequests, seeders y tests.
-- [x] **Frontend** (Iteración 4): Laravel + Blade sin BD en `frontend/` (puerto 3000).
-- [ ] Fase 5: OpenAPI con `dedoc/scramble`, tabla comparativa de métricas.
+- [x] **Frontend**: Laravel + Blade sin BD en `frontend/` (puerto 3000).
+- [x] **OpenAPI**: `dedoc/scramble` en los tres microservicios (`/docs/api`).

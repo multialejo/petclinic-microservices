@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/** Reglas de Visit.java + VisitController (docs/fase1/er-diagram.md). */
+/** Reglas de Visit.java + VisitController del monolito original. */
 class StoreVisitRequest extends FormRequest
 {
     public function authorize(): bool

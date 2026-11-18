@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Bonus de arquitectura (Iteración 3): al crear una visita se encola este listener en Redis.
+ * Al crear una visita se encola este listener en Redis.
  * El contenedor ms-visits-worker lo ejecuta: registra la auditoría y simula la notificación al dueño.
  * Si falla, se reintenta (tries) y acaba en failed_jobs, sin afectar al 201 ya devuelto al cliente.
  */

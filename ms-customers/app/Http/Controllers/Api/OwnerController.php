@@ -12,7 +12,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class OwnerController extends Controller
 {
-    /** Número de elementos por página, igual que el As-Is (OwnerController.processFindForm). */
+    /** Número de elementos por página, igual que el monolito original (OwnerController.processFindForm). */
     public const PER_PAGE = 5;
 
     /**

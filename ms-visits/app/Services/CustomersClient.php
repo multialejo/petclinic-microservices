@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
- * Cliente HTTP síncrono hacia ms-customers (docs/fase2 §5).
+ * Cliente HTTP síncrono hacia ms-customers.
  *
  * | Resultado de la llamada                    | Respuesta de ms-visits |
  * |--------------------------------------------|------------------------|

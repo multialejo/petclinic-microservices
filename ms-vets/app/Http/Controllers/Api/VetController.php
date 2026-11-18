@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class VetController extends Controller
 {
-    /** Número de elementos por página, igual que el As-Is (VetController.listHtml). */
+    /** Número de elementos por página, igual que el monolito original (VetController.listHtml). */
     public const PER_PAGE = 5;
 
     /**

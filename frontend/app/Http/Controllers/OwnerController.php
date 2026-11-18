@@ -10,8 +10,8 @@ use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 /**
- * CU-01..04 y la ficha del owner (CU-03). Mismas URLs, campos de formulario y mensajes que el
- * OwnerController del monolito; los datos salen del API Gateway (docs/fase2 §4).
+ * Búsqueda, alta, edición y ficha de owners. Mismas URLs, campos de formulario y mensajes que el
+ * OwnerController del monolito; los datos salen del API Gateway.
  */
 class OwnerController extends Controller
 {
@@ -31,7 +31,7 @@ class OwnerController extends Controller
         return view('owners.find');
     }
 
-    /** CU-01: 0 resultados -> formulario con "has not been found"; 1 -> ficha; página fuera de rango -> página 1. */
+    /** Búsqueda: 0 resultados -> formulario con "has not been found"; 1 -> ficha; página fuera de rango -> página 1. */
     public function index(Request $request): View|RedirectResponse
     {
         $lastName = trim((string) $request->query('lastName', ''));
@@ -77,7 +77,7 @@ class OwnerController extends Controller
         return redirect('/owners/'.data_get($owner, 'data.id'))->with('message', 'New Owner Created');
     }
 
-    /** CU-03: composición en el frontend: owner (ms-customers) + visitas en lote (ms-visits). */
+    /** Ficha: composición en el frontend: owner (ms-customers) + visitas en lote (ms-visits). */
     public function show(int $ownerId): View
     {
         $owner = $this->gateway->get("/api/customers/owners/{$ownerId}")['data'];

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/** Reglas de Owner.java (docs/fase1/er-diagram.md). Se usa en alta y edición. */
+/** Reglas de Owner.java del monolito original. Se usa en alta y edición. */
 class OwnerRequest extends FormRequest
 {
     public function authorize(): bool

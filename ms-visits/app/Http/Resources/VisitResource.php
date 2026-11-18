@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * La columna se llama visit_date (paridad con el As-Is); el contrato JSON expone `date`.
+ * La columna se llama visit_date (paridad con el monolito original); el contrato JSON expone `date`.
  *
  * @mixin \App\Models\Visit
  */

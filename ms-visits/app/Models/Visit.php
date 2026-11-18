@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Visita médica. Sin relaciones Eloquent: pet_id apunta a otro microservicio (ms-customers)
- * y solo se valida vía HTTP (docs/fase2 §2, regla crítica de datos).
+ * y solo se valida vía HTTP (regla crítica de datos).
  */
 class Visit extends Model
 {

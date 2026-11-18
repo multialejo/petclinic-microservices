@@ -35,7 +35,7 @@ return [
         ],
     ],
 
-    // Único backend del frontend (Fase 4, Iteración 4): el API Gateway. Sin BD propia.
+    // Único backend del frontend: el API Gateway. Sin BD propia.
     'gateway' => [
         'url' => env('GATEWAY_URL', 'http://gateway'),
         'timeout' => (int) env('GATEWAY_TIMEOUT', 8),

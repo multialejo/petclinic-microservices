@@ -8,8 +8,8 @@ use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Reglas de Pet.java + PetValidator + PetController (docs/fase1/er-diagram.md).
- * El nombre es único por owner sin distinguir mayúsculas (equalsIgnoreCase en el As-Is);
+ * Reglas de Pet.java + PetValidator + PetController del monolito original.
+ * El nombre es único por owner sin distinguir mayúsculas (equalsIgnoreCase en el monolito);
  * se compara con LOWER() para que funcione igual en MySQL y en SQLite (tests).
  */
 class PetRequest extends FormRequest
