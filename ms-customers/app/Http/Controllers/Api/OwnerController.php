@@ -16,8 +16,9 @@ class OwnerController extends Controller
     public const PER_PAGE = 5;
 
     /**
-     * CU-01: buscar owners por prefijo de apellido (sin parámetro: todos). Cada owner con pets[] {id, name}.
-     * Las reglas de UI del As-Is (0 resultados, 1 resultado → detalle) las aplica el frontend con `meta.total`.
+     * Buscar owners.
+     *
+     * Filtra por prefijo de `last_name`; sin parámetro devuelve todos. Paginado.
      */
     public function index(Request $request): AnonymousResourceCollection
     {
@@ -37,7 +38,7 @@ class OwnerController extends Controller
         return OwnerResource::collection($owners);
     }
 
-    /** CU-02: registrar owner. */
+    /** Registrar owner. */
     public function store(OwnerRequest $request): JsonResponse
     {
         $owner = Owner::create($request->validated());
@@ -47,13 +48,17 @@ class OwnerController extends Controller
             ->setStatusCode(201);
     }
 
-    /** CU-03 (parte customers): ficha del owner con sus pets (con tipo) ordenados por nombre. */
+    /**
+     * Ver owner.
+     *
+     * Incluye sus pets con tipo.
+     */
     public function show(Owner $owner): OwnerResource
     {
         return OwnerResource::make($owner->load('pets.type'));
     }
 
-    /** CU-04: editar owner. */
+    /** Editar owner. */
     public function update(OwnerRequest $request, Owner $owner): OwnerResource
     {
         $owner->update($request->validated());

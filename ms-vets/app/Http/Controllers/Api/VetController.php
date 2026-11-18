@@ -13,8 +13,9 @@ class VetController extends Controller
     public const PER_PAGE = 5;
 
     /**
-     * CU-09: listar veterinarios con sus especialidades (paginado).
-     * Sustituye a GET /vets y /vets.html del monolito.
+     * Listar veterinarios.
+     *
+     * Con especialidades, paginado.
      */
     public function index(): AnonymousResourceCollection
     {
