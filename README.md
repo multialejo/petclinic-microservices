@@ -2,9 +2,8 @@
 
 Repositorio (monorepo) de la reingeniería de Spring PetClinic hacia microservicios en Laravel.
 Contiene la infraestructura de la **Fase 3** y la migración de dominio de la **Fase 4** (Strangler Fig):
-ms-vets, ms-customers, ms-visits y un frontend desacoplado. Informe: `../docs/fase4/README.md`.
-La **Fase 5** (OpenAPI con Scramble, métricas y tabla comparativa) está en `../docs/fase5/README.md`;
-los scripts viven en `../metrics/` y `../hurl-tests/09-*`. UI de cada API en `http://localhost:800{1,2,3}/docs/api`.
+ms-vets, ms-customers, ms-visits y un frontend desacoplado.
+La **Fase 5** añade documentación OpenAPI con Scramble: UI de cada API en `http://localhost:800{1,2,3}/docs/api`.
 
 ## Estructura
 
@@ -92,8 +91,7 @@ docker compose restart ms-visits-worker
 Comprobación rápida: `curl -I http://localhost:8001/up` (y 8002, 8003) debe devolver `200`, y
 `curl http://localhost:8000/health` (gateway) `{"status":"ok"}`, `curl http://localhost:8000/api/vets` devuelve
 los 6 veterinarios y http://localhost:3000 abre la interfaz. El cliente (frontend, Postman) debe usar
-siempre el gateway (`http://localhost:8000/api/...`); los puertos 8001–8003 quedan para depuración. Ver `gateway/README.md`.
-Colección Postman de CU-01…09: `../docs/fase4/petclinic.postman_collection.json`.
+siempre el gateway (`http://localhost:8000/api/...`); los puertos 8001–8003 quedan para depuración.
 
 ## API (vía gateway)
 
